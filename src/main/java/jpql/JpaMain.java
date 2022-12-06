@@ -15,33 +15,35 @@ public class JpaMain {
 
         try {
 
-            final Team team = new Team();
-            team.setName("teamA");
-            em.persist(team);
+            final Team teamA = new Team();
+            teamA.setName("팀A");
+            em.persist(teamA);
 
-            final Member member = new Member();
-            member.setUsername("teamA");
-            member.setAge(10);
-            member.setTeam(team);
-            member.setType(ADMIN);
+            final Team teamB = new Team();
+            teamB.setName("팀B");
+            em.persist(teamB);
 
-            em.persist(member);
+            final Member member1 = new Member();
+            member1.setUsername("회원1");
+            member1.setTeam(teamA);
+            em.persist(member1);
 
-            em.flush();
-            em.clear();
+            final Member member2 = new Member();
+            member2.setUsername("회원2");
+            member2.setTeam(teamA);
+            em.persist(member2);
 
-            String query = "select m.username, 'HELLO', TRUE from Member m "+
-                            "where m.type = :userType";
+            final Member member3 = new Member();
+            member3.setUsername("회원3");
+            member3.setTeam(teamB);
+            em.persist(member3);
 
-            final List<Object[]> result = em.createQuery(query)
-                    .setParameter("userType", ADMIN)
-                    .getResultList();
+            final int resultCount = em.createQuery("update Member m set m.age = 20")
+                    .executeUpdate();
 
-            for (Object[] objects : result) {
-                System.out.println("objects[0] = " + objects[0]);
-                System.out.println("objects[0] = " + objects[1]);
-                System.out.println("objects[0] = " + objects[2]);
-            }
+            System.out.println("resultCount = " + resultCount);
+
+            System.out.println("member1.getAge() = " + member1.getAge());
 
             tx.commit();
         } catch (Exception e) {
